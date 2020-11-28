@@ -2,39 +2,39 @@ from abc import ABC, abstractmethod
 from typing import Dict, Optional, Hashable, TypeVar, Generic
 
 
-class Menu:
+class Context:
 
     def __init__(self, initial_state: "State"):
         self.state = initial_state
 
     def show(self):
         while self.state is not None:
-            self.state.menu = self
+            self.state.context = self
             input_ = self.state.run()
             self.state = self.state.next(input_)
 
 
-MENU_T = TypeVar("MENU_T", bound=Menu)
+CTX_T = TypeVar("CTX_T", bound=Context)
 Transitions = Dict[Optional[Hashable], Optional["State"]]
 
 
-class State(ABC, Generic[MENU_T]):
+class State(ABC, Generic[CTX_T]):
 
-    _menu: Optional[MENU_T] = None
+    _context: Optional[CTX_T] = None
 
     @property
-    def menu(self) -> MENU_T:
-        if self._menu is None:
+    def context(self) -> CTX_T:
+        if self._context is None:
             raise RuntimeError("'menu' is not initialized")
 
-        return self._menu
+        return self._context
 
-    @menu.setter
-    def menu(self, value: MENU_T) -> None:
-        if self._menu is not None:
+    @context.setter
+    def context(self, value: CTX_T) -> None:
+        if self._context is not None:
             raise ValueError("'menu' can be configured only once")
 
-        self._menu = value
+        self._context = value
 
     def next(self, input_: Optional[Hashable]) -> Optional["State"]:
         return self.transitions[input_]

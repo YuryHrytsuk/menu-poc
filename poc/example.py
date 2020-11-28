@@ -2,7 +2,11 @@ from typing import Optional, Hashable
 
 import inquirer
 
-from poc.menu import State, Menu, Transitions
+from poc.menu import State, Context, Transitions
+
+
+class Menu(Context):
+    pass
 
 
 class ListActionsState(State[Menu]):
@@ -87,7 +91,7 @@ class SetValueState(State[SubMenuState]):
             "Input value: "
         )
         answers = inquirer.prompt([input_value_q])
-        self.menu.value = answers[input_value_q.name]
+        self.context.value = answers[input_value_q.name]
         return None
 
 
@@ -100,7 +104,7 @@ class GetValueState(State[SubMenuState]):
         }
 
     def run(self) -> Optional[Hashable]:
-        print(f"Value: {self.menu.value}")
+        print(f"Value: {self.context.value}")
         return None
 
 
